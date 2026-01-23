@@ -36,6 +36,9 @@ public class Level extends Object {
 
     private String name;
     private int width, height;
+    private ArrayList<Script> scripts;
+    
+    private Level level;
     
     /**
      * Return the name of this level.
@@ -108,6 +111,8 @@ public class Level extends Object {
      * to start adding scripts.
      */
     public Level() {
+        scripts = new ArrayList<>();
+        level = null;
     }
     
     /**
@@ -115,6 +120,12 @@ public class Level extends Object {
      * @param script Script to add
      */
     public void addScript(Script script) {
+        Level currentLevel = script.getLevel();
+        if(currentLevel != null){
+            currentLevel.removeScript(script);
+        }
+        scripts.add(script);
+        script.setLevel(this);
     }
     
     /**
@@ -122,6 +133,8 @@ public class Level extends Object {
      * @param script script to remove
      */
     public void removeScript(Script script) {
+        scripts.remove(script);
+        script.setLevel(null);
     }
     
     /**
@@ -132,7 +145,14 @@ public class Level extends Object {
      * @return An <code>ArrayList</code> of all matching scripts.
      */
     public ArrayList getScripts(Script template) {
-        return null;
+         ArrayList<Script> matchingScripts;
+        matchingScripts = new ArrayList<>();
+        for (Script i: scripts){
+            if (i.matches(template)){
+                matchingScripts.add(i);
+            }
+        }
+        return matchingScripts;
     }
     
     /**
@@ -144,6 +164,11 @@ public class Level extends Object {
      *          no matching scripts in this <code>Level</code>.
      */
     public Script getScript(Script template) {
+        for (Script i: scripts){
+            if (i.matches(template)){
+                return i;
+            }
+        }
         return null;
     }
     
@@ -160,7 +185,13 @@ public class Level extends Object {
      *          this <code>Level</code>.
      */
     public Script getScript(int n, Script template) {
-        return null;
+        ArrayList<Script> matches = getScripts(template);
+        if (n >= matches.size() || n < 0){
+            return null;
+        }
+        else{
+            return matches.get(n);
+        }
     }
     
 /* * * * * Beginning of part 3 * * * * */

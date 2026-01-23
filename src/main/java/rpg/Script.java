@@ -18,6 +18,7 @@ public class Script {
 
     private int x, y;
     private String action, argument;
+    private Level level;
 
     /**
      * Constructor a Script at the given location with the given action and
@@ -38,6 +39,7 @@ public class Script {
         this.y = y;
         this.action = action;
         this.argument = argument;
+        level = null;
     }
 
     public Script(Script other) {
@@ -179,7 +181,11 @@ public class Script {
      * @return the Level that this script is in
      */
     public Level getLevel() {
-        return null;
+        return level;
+    }
+
+    public void setLevel(Level l){
+        level = l;
     }
 
     /**
@@ -188,6 +194,9 @@ public class Script {
      * Otherwise, there will be no effect.
      */
     public void remove() {
+        if (this.level != null){
+            this.level.removeScript(this);
+        }
     }
 
     /**
@@ -205,6 +214,17 @@ public class Script {
      *              is removed from its level.
      */
     public void move(int x, int y, Level level) {
+        if (level == null){
+            remove();
+        }
+        else if (this.level != level){
+            if (this.level != null){
+                this.level.removeScript(this);
+            }
+            level.addScript(this);
+        }
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -219,6 +239,8 @@ public class Script {
      * @param script Other script to whose location this one should move
      */
     public void move(Script other) {
+        move(other.getX(), other.getY(), other.getLevel());
+
     }
 
     /* * * * * Beginning of part 3 * * * * */
